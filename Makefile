@@ -7,6 +7,9 @@ lint:
 f-lint:
 	npx eslint --fix .
 
+start:
+	npx webpack serve --open
+
 develop:
 	npx webpack serve
 
