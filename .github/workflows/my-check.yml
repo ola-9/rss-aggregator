@@ -1,4 +1,4 @@
-name: project3
+name: my-check
 
 on:
   - push
