@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import app from './application.js';
 
-// const test = () => {
-//   console.log('test!');
-// };
+app();
