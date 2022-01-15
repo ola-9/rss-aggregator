@@ -4,10 +4,6 @@ import i18next from 'i18next';
 import render from './view';
 import ru from './locales/ru';
 
-const schema = yup.object().shape({
-  url: yup.string().url(),
-});
-
 const app = (i18nIntance) => {
   const elements = {
     container: document.querySelector('.container-fluid'),
@@ -20,42 +16,40 @@ const app = (i18nIntance) => {
 
   const state = {
     locale: 'ru',
-    urls: [],
-    form: {
-      url: '',
+    data: {
+      urls: [],
+      urlToAdd: '',
     },
     additionProcess: {
-      errorDesc: '',
-      errorType: '',
-      // state: '', // sent, error, sending, filling
+      state: '', // sent, error, sending, filling
       validationState: '', // valid / invalid
     },
   };
 
   const watchedState = onChange(state, render(i18nIntance, state, elements));
 
+  yup.setLocale({
+    url: () => ({ key: 'invalidUrl' }),
+    notOneOf: () => ({ key: 'notUnique' }),
+  });
+
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    state.url = formData.get('url');
-    schema.validate({ url: state.url })
-      .then((newUrl) => {
-        if (!state.urls.includes(newUrl.url)) {
-          state.urls.push(newUrl.url);
-          state.form.url = '';
-          state.additionProcess.errorDesc = '';
-          state.additionProcess.errorType = '';
-          watchedState.additionProcess.validationState = 'valid';
-        } else {
-          state.additionProcess.validationState = 'invalid';
-          state.additionProcess.errorDesc = 'addRssUrlForm.errors.notUnique';
-          watchedState.additionProcess.errorType = 'notUnique';
-        }
+    state.data.urlToAdd = formData.get('url');
+    yup.string()
+      .url()
+      .notOneOf(state.data.urls)
+      .validate(state.data.urlToAdd)
+      .then(() => {
+        state.data.urls.push(state.data.urlToAdd);
+        watchedState.additionProcess.validationState = 'valid';
       })
-      .catch(() => {
-        state.additionProcess.validationState = 'invalid';
-        state.additionProcess.errorDesc = 'addRssUrlForm.errors.invalidUrl';
-        watchedState.additionProcess.errorType = 'invalid';
+      .catch((err) => {
+        console.log('err.errors: ', err.errors);
+        console.log('keys:', Object.entries(err));
+        console.log('err.name: ', err.name);
+        console.log('err.message:', err.message);
       });
   });
 };
