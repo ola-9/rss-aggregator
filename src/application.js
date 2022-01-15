@@ -1,12 +1,14 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
+import i18next from 'i18next';
 import render from './view';
+import ru from './locales/ru';
 
 const schema = yup.object().shape({
   url: yup.string().url(),
 });
 
-const app = () => {
+const app = (i18nIntance) => {
   const elements = {
     container: document.querySelector('.container-fluid'),
     form: document.querySelector('.rss-form'),
@@ -17,18 +19,20 @@ const app = () => {
   };
 
   const state = {
+    locale: 'ru',
     urls: [],
     form: {
       url: '',
     },
     additionProcess: {
-      errorDesc: '', // error description
-      state: '', // sent, error, sending, filling
-      // validationState: '', // valid / invalid
+      errorDesc: '',
+      errorType: '',
+      // state: '', // sent, error, sending, filling
+      validationState: '', // valid / invalid
     },
   };
 
-  const watchedState = onChange(state, render(state, elements));
+  const watchedState = onChange(state, render(i18nIntance, state, elements));
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -40,19 +44,31 @@ const app = () => {
           state.urls.push(newUrl.url);
           state.form.url = '';
           state.additionProcess.errorDesc = '';
-          watchedState.additionProcess.state = 'valid';
+          state.additionProcess.errorType = '';
+          watchedState.additionProcess.validationState = 'valid';
         } else {
-          state.additionProcess.errorDesc = 'RSS уже существует';
-          watchedState.additionProcess.state = 'error';
-          state.additionProcess.state = 'filling';
+          state.additionProcess.validationState = 'invalid';
+          state.additionProcess.errorDesc = 'addRssUrlForm.errors.notUnique';
+          watchedState.additionProcess.errorType = 'notUnique';
         }
       })
       .catch(() => {
-        state.additionProcess.errorDesc = 'Ссылка должна быть валидным URL';
-        watchedState.additionProcess.state = 'error';
-        state.additionProcess.state = 'filling';
+        state.additionProcess.validationState = 'invalid';
+        state.additionProcess.errorDesc = 'addRssUrlForm.errors.invalidUrl';
+        watchedState.additionProcess.errorType = 'invalid';
       });
   });
 };
 
-export default app;
+const runApp = () => {
+  const i18nextIntance = i18next.createInstance();
+  i18nextIntance.init({
+    lng: 'ru',
+    debug: true,
+    resources: {
+      ru,
+    },
+  }).then(() => app(i18nextIntance));
+};
+
+export default runApp;

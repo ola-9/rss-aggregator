@@ -5,4 +5,4 @@
 Cервис для агрегации RSS-потоков, с помощью которых удобно читать разнообразные источники, например, блоги. Он позволяет добавлять неограниченное количество RSS-лент, сам их обновляет и добавляет новые записи в общий поток.
 
 ### Step1 
-[varcel deploy](https://frontend-project-lvl3-mfo3lqi2j-ola-9.vercel.app/)
+[varcel deploy](https://frontend-project-lvl3-lake-eight.vercel.app/)
