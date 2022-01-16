@@ -4,6 +4,15 @@ import i18next from 'i18next';
 import render from './view';
 import ru from './locales/ru';
 
+yup.setLocale({
+  string: {
+    url: () => ({ key: 'invalidUrl' }),
+  },
+  mixed: {
+    notOneOf: () => ({ key: 'notUniqueUrl' }),
+  },
+});
+
 const app = (i18nIntance) => {
   const elements = {
     container: document.querySelector('.container-fluid'),
@@ -21,17 +30,13 @@ const app = (i18nIntance) => {
       urlToAdd: '',
     },
     additionProcess: {
-      state: '', // sent, error, sending, filling
+      // formState: '', // sent, error, sending, filling
       validationState: '', // valid / invalid
+      errorDescPath: '',
     },
   };
 
   const watchedState = onChange(state, render(i18nIntance, state, elements));
-
-  yup.setLocale({
-    url: () => ({ key: 'invalidUrl' }),
-    notOneOf: () => ({ key: 'notUnique' }),
-  });
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -46,10 +51,9 @@ const app = (i18nIntance) => {
         watchedState.additionProcess.validationState = 'valid';
       })
       .catch((err) => {
-        console.log('err.errors: ', err.errors);
-        console.log('keys:', Object.entries(err));
-        console.log('err.name: ', err.name);
-        console.log('err.message:', err.message);
+        const [{ key }] = err.errors;
+        state.additionProcess.errorDescPath = `addRssUrlForm.errors.${key}`;
+        watchedState.additionProcess.validationState = 'invalid';
       });
   });
 };

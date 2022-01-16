@@ -1,17 +1,12 @@
 const render = (i18nIntance, state, elements) => (path, value) => {
   // console.log(`path: ${path}`);
-  // console.log(`value: ${value}`);
+  console.log(`value: ${value}`);
   // console.log(`prevValue: ${prevValue}`);
   const feedbackEl = elements.feedback;
   switch (value) {
-    case 'notUnique': {
-      elements.urlInput.classList.add('is-invalid');
-      feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDesc);
-      break;
-    }
     case 'invalid': {
       elements.urlInput.classList.add('is-invalid');
-      feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDesc);
+      feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDescPath);
       break;
     }
     case 'valid': {
@@ -21,9 +16,8 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       elements.urlInput.focus();
       break;
     }
-
     default:
-      throw new Error(`unknown state: ${value}`);
+      throw new Error(`unknown value: ${value}`);
   }
 };
 
