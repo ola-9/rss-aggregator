@@ -1,8 +1,10 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
+import axios from 'axios';
 import render from './view';
 import ru from './locales/ru';
+import parseData from './parser';
 
 yup.setLocale({
   string: {
@@ -21,10 +23,17 @@ const app = (i18nIntance) => {
     submitButton: document.querySelector('input[type="submit"]'),
     urlExample: document.querySelector('.text-muted'),
     feedback: document.querySelector('.feedback'),
+    // dataContainer: document.querySelector('.conraiiner-xxl'),
+    posts: document.querySelector('.posts'),
+    feeds: document.querySelector('.feeds'),
   };
 
   const state = {
     locale: 'ru',
+    feedsData: {
+      feeds: [],
+      posts: [],
+    },
     data: {
       urls: [],
       urlToAdd: '',
@@ -37,6 +46,7 @@ const app = (i18nIntance) => {
   };
 
   const watchedState = onChange(state, render(i18nIntance, state, elements));
+  // const watchedStateFeeds = onChange(state.feedsData, renderFeeds(state, elements));
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -49,6 +59,21 @@ const app = (i18nIntance) => {
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
         watchedState.additionProcess.validationState = 'valid';
+        axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(`${state.data.urlToAdd}`)}`)
+          .then((response) => {
+            const parser = new DOMParser();
+            const parsedRSS = parser.parseFromString(response.data.contents, 'text/xml');
+            return parsedRSS;
+          })
+          .then((data) => {
+            const [feed, posts] = parseData(data);
+            console.log('feed: ', feed);
+            console.log('potst: ', posts);
+            posts.forEach((post) => state.feedsData.posts.push(post));
+            watchedState.feedsData.feeds.push(feed);
+            // console.log(state.feedsData.feeds, state.feedsData.posts);
+          })
+          .catch((error) => console.log(error));
       })
       .catch((err) => {
         const [{ key }] = err.errors;
