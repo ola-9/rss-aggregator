@@ -33,15 +33,17 @@ const app = (i18nIntance) => {
     feedsData: {
       feeds: [],
       posts: [],
+      currentFeedId: '',
     },
     data: {
-      urls: [],
-      urlToAdd: '',
-    },
+      urls: [], // https://www.cnews.ru/inc/rss/news.xml
+      urlToAdd: '', // https://ru.hexlet.io/lessons.rss
+    }, // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
     additionProcess: {
       // formState: '', // sent, error, sending, filling
       validationState: '', // valid / invalid
       errorDescPath: '',
+      successDescPath: '',
     },
   };
 
@@ -58,27 +60,33 @@ const app = (i18nIntance) => {
       .validate(state.data.urlToAdd)
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
-        watchedState.additionProcess.validationState = 'valid';
+        // watchedState.additionProcess.validationState = 'valid';
         axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(`${state.data.urlToAdd}`)}`)
           .then((response) => {
             const parser = new DOMParser();
             const parsedRSS = parser.parseFromString(response.data.contents, 'text/xml');
+            state.additionProcess.successDescPath = 'addRssUrlForm.uploadSuccessMsg';
+            watchedState.additionProcess.validationState = 'valid';
             return parsedRSS;
           })
           .then((data) => {
             const [feed, posts] = parseData(data);
-            console.log('feed: ', feed);
-            console.log('potst: ', posts);
             posts.forEach((post) => state.feedsData.posts.push(post));
+            state.feedsData.currentFeedId = feed.id;
+            console.log('currentFeedId: ', state.feedsData.currentFeedId);
             watchedState.feedsData.feeds.push(feed);
-            // console.log(state.feedsData.feeds, state.feedsData.posts);
           })
-          .catch((error) => console.log(error));
+          .catch(() => {
+            state.additionProcess.errorDescPath = 'addRssUrlForm.networkError';
+            watchedState.additionProcess.validationState = 'invalid';
+            state.additionProcess.validationState = '';
+          });
       })
       .catch((err) => {
         const [{ key }] = err.errors;
         state.additionProcess.errorDescPath = `addRssUrlForm.errors.${key}`;
         watchedState.additionProcess.validationState = 'invalid';
+        state.additionProcess.validationState = ''; // to check
       });
   });
 };

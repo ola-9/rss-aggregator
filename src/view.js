@@ -14,30 +14,30 @@ const createBlock = (blockname) => {
   return blockWrapper;
 };
 
-const createFeedItem = () => {
+const createFeedItem = (feed) => {
   const item = document.createElement('li');
   item.classList.add('list-group-item', 'border-0', 'border-end-0');
   const title = document.createElement('h3');
   title.classList.add('h6', 'm-0');
-  title.textContent = 'Новые уроки на Хекслете';
+  title.textContent = feed.title;
   item.appendChild(title);
   const description = document.createElement('p');
   description.classList.add('m-0', 'small', 'text-black-50');
-  description.textContent = 'Практические уроки по программированию';
+  description.textContent = feed.description;
   item.appendChild(description);
   return item;
 };
 
-const createPostItem = () => {
+const createPostItem = (post) => {
   const item = document.createElement('li');
   item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
   const aEl = document.createElement('a');
-  aEl.href = 'https://ru.hexlet.io/courses/java-arrays/lessons/implementation/theory_unit';
+  aEl.href = post.postUrl;
   aEl.classList.add('fw-bold');
   aEl.rel = 'noopener, noreferrer';
   aEl.dataset.id = 2;
   aEl.target = '_blank';
-  const description = document.createTextNode('Реализация массивов / Java: Массивы');
+  const description = document.createTextNode(post.postTitle);
   aEl.appendChild(description);
   item.appendChild(aEl);
   const button = document.createElement('button');
@@ -52,8 +52,8 @@ const createPostItem = () => {
 };
 
 const render = (i18nIntance, state, elements) => (path, value) => {
-  console.log(`path: ${path}`);
-  console.log(`value: ${value}`);
+  // console.log(`path: ${path}`);
+  // console.log(`value: ${value}`);
   // console.log(`prevValue: ${prevValue}`);
   const feedbackEl = elements.feedback;
   switch (path) {
@@ -61,29 +61,40 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       if (value === 'invalid') {
         elements.urlInput.classList.add('is-invalid');
         feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDescPath);
+        feedbackEl.classList.add('text-danger');
+        feedbackEl.classList.remove('text-success');
       }
 
       if (value === 'valid') {
         elements.urlInput.classList.remove('is-invalid');
-        feedbackEl.textContent = '';
+        feedbackEl.textContent = i18nIntance.t(state.additionProcess.successDescPath);
+        feedbackEl.classList.remove('text-danger');
+        feedbackEl.classList.add('text-success');
         elements.form.reset();
         elements.urlInput.focus();
       }
       break;
     }
     case 'feedsData.feeds': {
-      console.log('feed & posts');
-
-      const feeds = createBlock('Фиды');
-      elements.feeds.appendChild(feeds);
+      if (state.feedsData.feeds.length === 1) {
+        console.log('!!!', state.feedsData.feeds.length);
+        const feeds = createBlock('Фиды');
+        elements.feeds.appendChild(feeds);
+        const posts = createBlock('Посты');
+        elements.posts.appendChild(posts);
+      }
       const feedsList = elements.feeds.querySelector('ul');
-      const feedItemExmaple = createFeedItem(); // example
-      feedsList.appendChild(feedItemExmaple);
-      const posts = createBlock('Посты');
-      elements.posts.appendChild(posts);
+      const [currentFeed] = state.feedsData.feeds
+        .filter((feed) => feed.id === state.feedsData.currentFeedId);
+      const feedItem = createFeedItem(currentFeed);
+      feedsList.appendChild(feedItem);
       const postsList = elements.posts.querySelector('ul');
-      const postItemExampe = createPostItem(); // example
-      postsList.appendChild(postItemExampe);
+      const currentPosts = state.feedsData.posts
+        .filter((post) => post.feedId === state.feedsData.currentFeedId);
+      currentPosts.forEach((post) => {
+        const postItem = createPostItem(post);
+        postsList.append(postItem);
+      });
       break;
     }
     default:

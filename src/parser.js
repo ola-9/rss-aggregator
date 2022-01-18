@@ -1,13 +1,15 @@
+import _ from 'lodash';
+
 const parseData = (data) => {
   const title = data.querySelector('title').textContent;
   const description = data.querySelector('description').textContent;
-  const id = 1;
+  const id = _.uniqueId('feed_');
   const feed = { title, description, id };
   const posts = [...data.querySelectorAll('item')]
     .map((item) => {
       const postTitle = item.querySelector('title').textContent;
       const postUrl = item.querySelector('link').textContent;
-      const postId = 0;
+      const postId = _.uniqueId('post_');
       return {
         postId, postTitle, postUrl, feedId: id,
       };
