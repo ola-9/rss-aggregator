@@ -56,28 +56,23 @@ const render = (i18nIntance, state, elements) => (path, value) => {
   // console.log(`value: ${value}`);
   // console.log(`prevValue: ${prevValue}`);
   const feedbackEl = elements.feedback;
-  switch (path) {
-    case 'additionProcess.validationState': {
-      if (value === 'invalid') {
-        elements.urlInput.classList.add('is-invalid');
-        feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDescPath);
-        feedbackEl.classList.add('text-danger');
-        feedbackEl.classList.remove('text-success');
-      }
-
-      if (value === 'valid') {
-        elements.urlInput.classList.remove('is-invalid');
-        feedbackEl.textContent = i18nIntance.t(state.additionProcess.successDescPath);
-        feedbackEl.classList.remove('text-danger');
-        feedbackEl.classList.add('text-success');
-        elements.form.reset();
-        elements.urlInput.focus();
-      }
+  switch (value) {
+    case 'invalid': {
+      elements.urlInput.classList.add('is-invalid');
+      feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDescPath);
+      feedbackEl.classList.add('text-danger');
+      feedbackEl.classList.remove('text-success');
       break;
     }
-    case 'feedsData.feeds': {
+    case 'valid': {
+      elements.urlInput.classList.remove('is-invalid');
+      feedbackEl.textContent = i18nIntance.t(state.additionProcess.successDescPath);
+      feedbackEl.classList.remove('text-danger');
+      feedbackEl.classList.add('text-success');
+      elements.form.reset();
+      elements.urlInput.focus();
       if (state.feedsData.feeds.length === 1) {
-        console.log('!!!', state.feedsData.feeds.length);
+        // console.log('!!!', state.feedsData.feeds.length);
         const feeds = createBlock('Фиды');
         elements.feeds.appendChild(feeds);
         const posts = createBlock('Посты');

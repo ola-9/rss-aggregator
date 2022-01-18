@@ -7,6 +7,7 @@ export default {
       },
       uploadSuccessMsg: 'RSS успешно загружен',
       networkError: 'Ошибка сети',
+      invalidRss: 'Ресурс не содержит валидный RSS',
     },
   },
 };
