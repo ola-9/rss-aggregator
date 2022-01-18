@@ -37,24 +37,11 @@ const downloadRss = (state, watchedState) => {
       watchedState.additionProcess.validationState = 'valid';
       state.additionProcess.validationState = '';
     })
-    .catch((error) => { // typeError - not valid RSS, networkError: Ошибка сети
-      console.log('error.name: ', error.name);
-      switch (error.name) {
-        case 'Error': {
-          state.additionProcess.errorDescPath = 'addRssUrlForm.networkError';
-          watchedState.additionProcess.validationState = 'invalid';
-          state.additionProcess.validationState = '';
-          break;
-        }
-        case 'TypeError': {
-          state.additionProcess.errorDescPath = 'addRssUrlForm.invalidRss';
-          watchedState.additionProcess.validationState = 'invalid';
-          state.additionProcess.validationState = '';
-          break;
-        }
-        default:
-          throw new Error(`unknown error ${error}`);
-      }
+    .catch((error) => { // typeError - not valid RSS, Error: Ошибка сети
+      // console.log('error.name: ', error.name); // можно упростить и убрать switch
+      state.additionProcess.errorDescPath = `addRssUrlForm.${error.name}`;
+      watchedState.additionProcess.validationState = 'invalid';
+      state.additionProcess.validationState = '';
     });
 };
 

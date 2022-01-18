@@ -6,8 +6,8 @@ export default {
         invalidUrl: 'Ссылка должна быть валидным URL',
       },
       uploadSuccessMsg: 'RSS успешно загружен',
-      networkError: 'Ошибка сети',
-      invalidRss: 'Ресурс не содержит валидный RSS',
+      Error: 'Ошибка сети',
+      TypeError: 'Ресурс не содержит валидный RSS',
     },
   },
 };
