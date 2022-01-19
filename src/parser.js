@@ -2,11 +2,13 @@
 import _ from 'lodash';
 import axios from 'axios';
 
-const getData = (data) => {
+const getData = (data, url) => {
   const title = data.querySelector('title').textContent;
   const description = data.querySelector('description').textContent;
   const id = _.uniqueId('feed_');
-  const feed = { title, description, id };
+  const feed = {
+    title, description, id, url,
+  };
   const posts = [...data.querySelectorAll('item')]
     .map((item) => {
       const postTitle = item.querySelector('title').textContent;
@@ -25,14 +27,15 @@ const downloadRss = (state, watchedState) => {
       const parser = new DOMParser();
       const parsedRSS = parser.parseFromString(response.data.contents, 'text/xml');
       state.additionProcess.successDescPath = 'addRssUrlForm.uploadSuccessMsg';
-      // watchedState.additionProcess.validationState = 'valid';
       return parsedRSS;
     })
     .then((data) => {
-      const [feed, posts] = getData(data);
+      // console.log(data);
+      const [feed, posts] = getData(data, state.data.urlToAdd);
       posts.forEach((post) => state.feedsData.posts.push(post));
       state.feedsData.currentFeedId = feed.id;
       // console.log('currentFeedId: ', state.feedsData.currentFeedId);
+      // console.log(feed);
       state.feedsData.feeds.push(feed);
       watchedState.additionProcess.validationState = 'valid';
       state.additionProcess.validationState = '';

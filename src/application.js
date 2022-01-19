@@ -1,10 +1,10 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
-// import axios from 'axios';
 import render from './view';
 import ru from './locales/ru';
 import downloadRss from './parser';
+import trackUpdates from './update';
 
 yup.setLocale({
   string: {
@@ -29,6 +29,11 @@ const app = (i18nIntance) => {
 
   const state = {
     locale: 'ru',
+    update: {
+      updateState: '',
+      postsToRender: [],
+    },
+    // updateState: '',
     feedsData: {
       feeds: [],
       posts: [],
@@ -46,6 +51,7 @@ const app = (i18nIntance) => {
   };
 
   const watchedState = onChange(state, render(i18nIntance, state, elements));
+  trackUpdates(state, watchedState);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -58,6 +64,7 @@ const app = (i18nIntance) => {
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
         downloadRss(state, watchedState);
+        // trackUpdates(state, watchedState);
       })
       .catch((err) => {
         const [{ key }] = err.errors;

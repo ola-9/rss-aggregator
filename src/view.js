@@ -82,13 +82,22 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       const [currentFeed] = state.feedsData.feeds
         .filter((feed) => feed.id === state.feedsData.currentFeedId);
       const feedItem = createFeedItem(currentFeed);
-      feedsList.appendChild(feedItem);
+      feedsList.prepend(feedItem);
       const postsList = elements.posts.querySelector('ul');
       const currentPosts = state.feedsData.posts
         .filter((post) => post.feedId === state.feedsData.currentFeedId);
       currentPosts.forEach((post) => {
         const postItem = createPostItem(post);
-        postsList.append(postItem);
+        postsList.prepend(postItem);
+      });
+      break;
+    }
+    case 'updated': {
+      console.log('updating posts');
+      const postsList = elements.posts.querySelector('ul');
+      state.update.postsToRender.forEach((post) => {
+        const postItem = createPostItem(post);
+        postsList.prepend(postItem);
       });
       break;
     }
