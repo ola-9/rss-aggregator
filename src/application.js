@@ -8,28 +8,6 @@ import ru from './locales/ru';
 import downloadRss from './parser';
 import trackUpdates from './update';
 
-yup.setLocale({
-  string: {
-    url: () => ({ key: 'invalidUrl' }),
-  },
-  mixed: {
-    notOneOf: () => ({ key: 'notUniqueUrl' }),
-  },
-});
-
-const elements = {
-  body: document.querySelector('body'),
-  container: document.querySelector('.container-fluid'),
-  form: document.querySelector('.rss-form'),
-  urlInput: document.getElementById('url-input'),
-  submitButton: document.querySelector('input[type="submit"]'),
-  urlExample: document.querySelector('.text-muted'),
-  feedback: document.querySelector('.feedback'),
-  posts: document.querySelector('.posts'),
-  feeds: document.querySelector('.feeds'),
-  modal: document.getElementById('modal'),
-};
-
 const runApp = () => {
   const i18nextIntance = i18next.createInstance();
   i18nextIntance.init({
@@ -40,6 +18,28 @@ const runApp = () => {
     },
   // }).then(() => app(i18nextIntance));
   }).then(() => {
+    yup.setLocale({
+      string: {
+        url: () => ({ key: 'invalidUrl' }),
+      },
+      mixed: {
+        notOneOf: () => ({ key: 'notUniqueUrl' }),
+      },
+    });
+
+    const elements = {
+      body: document.querySelector('body'),
+      container: document.querySelector('.container-fluid'),
+      form: document.querySelector('.rss-form'),
+      urlInput: document.getElementById('url-input'),
+      submitButton: document.querySelector('input[type="submit"]'),
+      urlExample: document.querySelector('.text-muted'),
+      feedback: document.querySelector('.feedback'),
+      posts: document.querySelector('.posts'),
+      feeds: document.querySelector('.feeds'),
+      modal: document.getElementById('modal'),
+    };
+
     const state = {
       locale: 'ru',
       modal: {
