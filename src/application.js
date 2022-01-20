@@ -15,20 +15,27 @@ yup.setLocale({
   },
 });
 
-const app = (i18nIntance) => {
-  const elements = {
-    container: document.querySelector('.container-fluid'),
-    form: document.querySelector('.rss-form'),
-    urlInput: document.getElementById('url-input'),
-    submitButton: document.querySelector('input[type="submit"]'),
-    urlExample: document.querySelector('.text-muted'),
-    feedback: document.querySelector('.feedback'),
-    posts: document.querySelector('.posts'),
-    feeds: document.querySelector('.feeds'),
-  };
+const elements = {
+  body: document.querySelector('body'),
+  container: document.querySelector('.container-fluid'),
+  form: document.querySelector('.rss-form'),
+  urlInput: document.getElementById('url-input'),
+  submitButton: document.querySelector('input[type="submit"]'),
+  urlExample: document.querySelector('.text-muted'),
+  feedback: document.querySelector('.feedback'),
+  posts: document.querySelector('.posts'),
+  feeds: document.querySelector('.feeds'),
+  modal: document.getElementById('modal'),
+};
 
+const app = (i18nIntance) => {
   const state = {
     locale: 'ru',
+    modal: {
+      modalState: '', // open, closed,
+      readPostsIds: [],
+      lastReadPostId: '',
+    },
     update: {
       updateState: '',
       postsToRender: [],
@@ -51,7 +58,6 @@ const app = (i18nIntance) => {
   };
 
   const watchedState = onChange(state, render(i18nIntance, state, elements));
-  trackUpdates(state, watchedState);
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -72,6 +78,17 @@ const app = (i18nIntance) => {
         watchedState.additionProcess.validationState = 'invalid';
         state.additionProcess.validationState = ''; // to check
       });
+  });
+
+  trackUpdates(state, watchedState);
+
+  elements.modal.addEventListener('show.bs.modal', (e) => {
+    const button = e.relatedTarget;
+    const id = button.getAttribute('data-id');
+    state.modal.lastReadPostId = id;
+    state.modal.readPostsIds.push(id);
+    watchedState.modal.modalState = 'opened';
+    state.modal.modalState = ''; // ???
   });
 };
 

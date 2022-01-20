@@ -35,7 +35,7 @@ const createPostItem = (post) => {
   aEl.href = post.postUrl;
   aEl.classList.add('fw-bold');
   aEl.rel = 'noopener, noreferrer';
-  aEl.dataset.id = 2;
+  aEl.dataset.id = post.postId;
   aEl.target = '_blank';
   const description = document.createTextNode(post.postTitle);
   aEl.appendChild(description);
@@ -43,7 +43,7 @@ const createPostItem = (post) => {
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  button.dataset.id = 2; // example;
+  button.dataset.id = post.postId; // example;
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
   button.textContent = 'Просмотр';
@@ -88,7 +88,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         .filter((post) => post.feedId === state.feedsData.currentFeedId);
       currentPosts.forEach((post) => {
         const postItem = createPostItem(post);
-        postsList.prepend(postItem);
+        postsList.append(postItem);
       });
       break;
     }
@@ -99,6 +99,19 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         const postItem = createPostItem(post);
         postsList.prepend(postItem);
       });
+      break;
+    }
+    case 'opened': {
+      console.log('modal is opened');
+      const readPost = elements.posts.querySelector(`[data-id="${state.modal.lastReadPostId}"]`);
+      readPost.classList.remove('fw-bold');
+      readPost.classList.add('fw-normal', 'link-secondary');
+      const [selectedPost] = state.feedsData.posts
+        .filter((post) => post.postId === state.modal.lastReadPostId);
+      const title = elements.modal.querySelector('.modal-title');
+      const description = elements.modal.querySelector('.modal-body');
+      title.textContent = selectedPost.postTitle;
+      description.textContent = selectedPost.postDesc;
       break;
     }
     default:

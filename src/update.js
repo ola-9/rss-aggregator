@@ -42,7 +42,7 @@ const trackUpdates = (state, watchedState) => {
       });
   });
 
-  setTimeout(() => trackUpdates(state, watchedState), 5000);
+  // setTimeout(() => trackUpdates(state, watchedState), 5000);
   // setTimeout(trackUpdates, 5000);
 };
 

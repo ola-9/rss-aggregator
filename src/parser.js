@@ -13,9 +13,10 @@ const getData = (data, url) => {
     .map((item) => {
       const postTitle = item.querySelector('title').textContent;
       const postUrl = item.querySelector('link').textContent;
+      const postDesc = item.querySelector('description').textContent;
       const postId = _.uniqueId('post_');
       return {
-        postId, postTitle, postUrl, feedId: id,
+        postId, postTitle, postUrl, postDesc, feedId: id,
       };
     });
   return [feed, posts];
