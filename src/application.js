@@ -1,4 +1,4 @@
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import onChange from 'on-change';
 import * as yup from 'yup';
@@ -30,71 +30,6 @@ const elements = {
   modal: document.getElementById('modal'),
 };
 
-const app = (i18nIntance) => {
-  const state = {
-    locale: 'ru',
-    modal: {
-      modalState: '', // open, closed,
-      readPostsIds: [],
-      lastReadPostId: '',
-    },
-    update: {
-      updateState: '',
-      postsToRender: [],
-    },
-    // updateState: '',
-    feedsData: {
-      feeds: [],
-      posts: [],
-      currentFeedId: '',
-    },
-    data: {
-      urls: [], // https://www.cnews.ru/inc/rss/news.xml
-      urlToAdd: '', // https://ru.hexlet.io/lessons.rss
-    }, // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
-    additionProcess: {
-      submisionStatus: '',
-      validationState: '', // valid / invalid
-      errorDescPath: '',
-      successDescPath: '',
-    },
-  };
-
-  const watchedState = onChange(state, render(i18nIntance, state, elements));
-
-  elements.form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    state.data.urlToAdd = formData.get('url');
-    yup.string()
-      .url()
-      .notOneOf(state.data.urls)
-      .validate(state.data.urlToAdd)
-      .then(() => {
-        state.data.urls.push(state.data.urlToAdd);
-        downloadRss(state, watchedState);
-        // trackUpdates(state, watchedState);
-      })
-      .catch((err) => {
-        const [{ key }] = err.errors;
-        state.additionProcess.errorDescPath = `addRssUrlForm.errors.${key}`;
-        watchedState.additionProcess.validationState = 'invalid';
-        state.additionProcess.validationState = ''; // to check
-      });
-  });
-
-  trackUpdates(state, watchedState);
-
-  elements.modal.addEventListener('show.bs.modal', (e) => {
-    const button = e.relatedTarget;
-    const id = button.getAttribute('data-id');
-    state.modal.lastReadPostId = id;
-    state.modal.readPostsIds.push(id);
-    watchedState.modal.modalState = 'opened';
-    state.modal.modalState = ''; // ???
-  });
-};
-
 const runApp = () => {
   const i18nextIntance = i18next.createInstance();
   i18nextIntance.init({
@@ -103,7 +38,69 @@ const runApp = () => {
     resources: {
       ru,
     },
-  }).then(() => app(i18nextIntance));
+  // }).then(() => app(i18nextIntance));
+  }).then(() => {
+    const state = {
+      locale: 'ru',
+      modal: {
+        modalState: '', // open, closed,
+        readPostsIds: [],
+        lastReadPostId: '',
+      },
+      update: {
+        updateState: '',
+        postsToRender: [],
+      },
+      // updateState: '',
+      feedsData: {
+        feeds: [],
+        posts: [],
+        currentFeedId: '',
+      },
+      data: {
+        urls: [], // https://www.cnews.ru/inc/rss/news.xml
+        urlToAdd: '', // https://ru.hexlet.io/lessons.rss
+      }, // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
+      additionProcess: {
+        submisionStatus: '',
+        validationState: '', // valid / invalid
+        errorDescPath: '',
+        successDescPath: '',
+      },
+    };
+    const watchedState = onChange(state, render(i18nextIntance, state, elements));
+
+    elements.form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      state.data.urlToAdd = formData.get('url');
+      yup.string()
+        .url()
+        .notOneOf(state.data.urls)
+        .validate(state.data.urlToAdd)
+        .then(() => {
+          state.data.urls.push(state.data.urlToAdd);
+          downloadRss(state, watchedState);
+        })
+        .catch((err) => {
+          const [{ key }] = err.errors;
+          state.additionProcess.errorDescPath = `addRssUrlForm.errors.${key}`;
+          watchedState.additionProcess.validationState = 'invalid';
+          state.additionProcess.validationState = ''; // to check
+        });
+    });
+
+    trackUpdates(state, watchedState);
+
+    elements.modal.addEventListener('show.bs.modal', (e) => {
+      const button = e.relatedTarget;
+      const id = button.getAttribute('data-id');
+      state.modal.lastReadPostId = id;
+      state.modal.readPostsIds.push(id);
+      watchedState.modal.modalState = 'opened';
+      state.modal.modalState = ''; // ???
+    });
+  });
 };
 
 export default runApp;
