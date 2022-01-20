@@ -93,7 +93,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'updated': {
-      console.log('updating posts');
+      // console.log('updating posts');
       const postsList = elements.posts.querySelector('ul');
       state.update.postsToRender.forEach((post) => {
         const postItem = createPostItem(post);
@@ -102,7 +102,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'opened': {
-      console.log('modal is opened');
+      // console.log('modal is opened');
       const readPost = elements.posts.querySelector(`[data-id="${state.modal.lastReadPostId}"]`);
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
