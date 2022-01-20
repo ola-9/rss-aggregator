@@ -1,3 +1,4 @@
+import 'bootstrap';
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
