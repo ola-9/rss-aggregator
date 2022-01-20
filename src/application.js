@@ -1,8 +1,8 @@
 import onChange from 'on-change';
 import * as yup from 'yup';
-import i18next from 'i18next';
+// import i18next from 'i18next';
 import render from './view';
-import ru from './locales/ru';
+// import ru from './locales/ru';
 import downloadRss from './parser';
 import trackUpdates from './update';
 
@@ -91,15 +91,16 @@ const app = (i18nextIntance) => {
   });
 };
 
-const runApp = () => {
-  const i18nextIntance = i18next.createInstance();
-  i18nextIntance.init({
-    lng: 'ru',
-    debug: true,
-    resources: {
-      ru,
-    },
-  }).then(() => app(i18nextIntance));
-};
+// const runApp = () => {
+//   const i18nextIntance = i18next.createInstance();
+//   i18nextIntance.init({
+//     lng: 'ru',
+//     debug: true,
+//     resources: {
+//       ru,
+//     },
+//   }).then(() => app(i18nextIntance));
+// };
 
-export default runApp;
+// export default runApp;
+export default app;
