@@ -51,6 +51,7 @@ const app = (i18nIntance) => {
       urlToAdd: '', // https://ru.hexlet.io/lessons.rss
     }, // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
     additionProcess: {
+      submisionStatus: '',
       validationState: '', // valid / invalid
       errorDescPath: '',
       successDescPath: '',
