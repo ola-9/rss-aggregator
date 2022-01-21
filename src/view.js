@@ -108,7 +108,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       const postsList = elements.posts.querySelector('ul');
       state.update.postsToRender.forEach((post) => {
         const postItem = createPostItem(post);
-        postsList.prepend(postItem);
+        postsList.append(postItem);
       });
       break;
     }
