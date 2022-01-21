@@ -6,29 +6,29 @@ import ru from './locales/ru';
 import downloadRss from './parser';
 import trackUpdates from './update';
 
-yup.setLocale({
-  string: {
-    url: () => ({ key: 'invalidUrl' }),
-  },
-  mixed: {
-    notOneOf: () => ({ key: 'notUniqueUrl' }),
-  },
-});
-
-const elements = {
-  body: document.querySelector('body'),
-  container: document.querySelector('.container-fluid'),
-  form: document.querySelector('.rss-form'),
-  urlInput: document.getElementById('url-input'),
-  submitButton: document.querySelector('input[type="submit"]'),
-  urlExample: document.querySelector('.text-muted'),
-  feedback: document.querySelector('.feedback'),
-  posts: document.querySelector('.posts'),
-  feeds: document.querySelector('.feeds'),
-  modal: document.getElementById('modal'),
-};
-
 const app = (i18nextIntance) => {
+  yup.setLocale({
+    string: {
+      url: () => ({ key: 'invalidUrl' }),
+    },
+    mixed: {
+      notOneOf: () => ({ key: 'notUniqueUrl' }),
+    },
+  });
+
+  const elements = {
+    body: document.querySelector('body'),
+    container: document.querySelector('.container-fluid'),
+    form: document.querySelector('.rss-form'),
+    urlInput: document.getElementById('url-input'),
+    submitButton: document.querySelector('input[type="submit"]'),
+    urlExample: document.querySelector('.text-muted'),
+    feedback: document.querySelector('.feedback'),
+    posts: document.querySelector('.posts'),
+    feeds: document.querySelector('.feeds'),
+    modal: document.getElementById('modal'),
+  };
+
   const state = {
     locale: 'ru',
     modal: {
