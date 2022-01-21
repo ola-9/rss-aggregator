@@ -20,9 +20,10 @@ const trackUpdates = (state, watchedState) => {
           .map((post) => {
             const postTitle = post.querySelector('title').textContent;
             const postUrl = post.querySelector('link').textContent;
+            const postDesc = post.querySelector('description').textContent;
             const postId = _.uniqueId('post_');
             return {
-              postId, postTitle, postUrl, feedId: id,
+              postId, postTitle, postUrl, postDesc, feedId: id,
             };
           });
         // console.log('posts from state before update: ', state.feedsData.posts);
