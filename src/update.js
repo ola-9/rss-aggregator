@@ -5,7 +5,7 @@ import axios from 'axios';
 import _ from 'lodash';
 
 const trackUpdates = (state, watchedState) => {
-  // console.log('updating feeds');
+  console.log('updating feeds');
   state.data.urls.forEach((url) => {
     axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(`${url}`)}`)
       .then((response) => {
@@ -26,14 +26,14 @@ const trackUpdates = (state, watchedState) => {
               postId, postTitle, postUrl, postDesc, feedId: id,
             };
           });
-        // console.log('posts from state before update: ', state.feedsData.posts);
+        console.log('posts from state before update: ', state.feedsData.posts);
         const postsToRender = posts
           .filter(({ postTitle: title1 }) => !state.feedsData.posts
             .some(({ postTitle: title2 }) => title2 === title1));
         // console.log('postsToRender', postsToRender);
         state.update.postsToRender = postsToRender;
         state.feedsData.posts = state.feedsData.posts.concat(postsToRender);
-        // console.log('posts from state after update: ', state.feedsData.posts);
+        console.log('posts from state after update: ', state.feedsData.posts);
         watchedState.update.updateState = 'updated';
         state.update.updateState = '';
         state.update.postsToRender = '';

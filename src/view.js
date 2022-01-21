@@ -89,7 +89,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         .filter((post) => post.feedId === state.feedsData.currentFeedId);
       currentPosts.forEach((post) => {
         const postItem = createPostItem(post);
-        postsList.append(postItem);
+        postsList.prepend(postItem);
       });
       break;
     }
@@ -108,7 +108,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       const postsList = elements.posts.querySelector('ul');
       state.update.postsToRender.forEach((post) => {
         const postItem = createPostItem(post);
-        postsList.append(postItem);
+        postsList.prepend(postItem);
       });
       break;
     }
