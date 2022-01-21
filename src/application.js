@@ -21,13 +21,15 @@ const app = (i18nextIntance) => {
     container: document.querySelector('.container-fluid'),
     form: document.querySelector('.rss-form'),
     urlInput: document.getElementById('url-input'),
-    submitButton: document.querySelector('input[type="submit"]'),
+    addButton: document.querySelector('button[type="submit"]'),
     urlExample: document.querySelector('.text-muted'),
     feedback: document.querySelector('.feedback'),
     posts: document.querySelector('.posts'),
     feeds: document.querySelector('.feeds'),
     modal: document.getElementById('modal'),
   };
+
+  // console.log(elements.addButton);
 
   const state = {
     locale: 'ru',
@@ -69,7 +71,9 @@ const app = (i18nextIntance) => {
       .validate(state.data.urlToAdd)
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
+        watchedState.additionProcess.submisionStatus = 'receiving';
         downloadRss(state, watchedState);
+        // watchedState.additionProcess.submisionStatus = 'received';
       })
       .catch((err) => {
         const [{ key }] = err.errors;

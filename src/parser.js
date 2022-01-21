@@ -28,6 +28,7 @@ const downloadRss = (state, watchedState) => {
       const parser = new DOMParser();
       const parsedRSS = parser.parseFromString(response.data.contents, 'text/xml');
       state.additionProcess.successDescPath = 'addRssUrlForm.uploadSuccessMsg';
+      watchedState.additionProcess.submisionStatus = 'received';
       return parsedRSS;
     })
     .then((data) => {

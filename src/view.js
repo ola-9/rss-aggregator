@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const createBlock = (blockname) => {
   const blockWrapper = document.createElement('div');
   blockWrapper.classList.add('card', 'border-0');
@@ -90,6 +91,16 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         const postItem = createPostItem(post);
         postsList.append(postItem);
       });
+      break;
+    }
+    case 'receiving': {
+      elements.urlInput.readOnly = true;
+      elements.addButton.disabled = true;
+      break;
+    }
+    case 'received': {
+      elements.urlInput.readOnly = false;
+      elements.addButton.disabled = false;
       break;
     }
     case 'updated': {
