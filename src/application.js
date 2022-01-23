@@ -33,7 +33,7 @@ const app = (i18nextIntance) => {
 
   const state = {
     locale: 'ru',
-    modal: {
+    postsState: {
       modalState: '', // open, closed,
       readPostsIds: [],
       lastReadPostId: '',
@@ -88,10 +88,10 @@ const app = (i18nextIntance) => {
   elements.modal.addEventListener('show.bs.modal', (e) => {
     const button = e.relatedTarget;
     const id = button.getAttribute('data-id');
-    state.modal.lastReadPostId = id;
-    state.modal.readPostsIds.push(id);
-    watchedState.modal.modalState = 'previewPost';
-    state.modal.modalState = ''; // ???
+    state.postsState.lastReadPostId = id;
+    state.postsState.readPostsIds.push(id);
+    watchedState.postsState.modalState = 'previewPost';
+    state.postsState.modalState = ''; // ???
   });
 
   elements.posts.addEventListener('click', (e) => {
@@ -99,10 +99,10 @@ const app = (i18nextIntance) => {
     // console.log(e);
     if (e.target.className === 'fw-bold') {
       const { id } = e.target.dataset;
-      state.modal.lastReadPostId = id;
-      state.modal.readPostsIds.push(id);
-      watchedState.modal.modalState = 'openPost';
-      state.modal.modalState = ''; // ???
+      state.postsState.lastReadPostId = id;
+      state.postsState.readPostsIds.push(id);
+      watchedState.postsState.modalState = 'openPost';
+      state.postsState.modalState = ''; // ???
       // const readPost = elements.posts.querySelector(`a[data-id=${id}`);
       // console.log(readPost);
     }

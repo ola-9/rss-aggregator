@@ -114,11 +114,11 @@ const render = (i18nIntance, state, elements) => (path, value) => {
     }
     case 'previewPost': {
       // console.log('modal is opened');
-      const readPost = elements.posts.querySelector(`[data-id="${state.modal.lastReadPostId}"]`);
+      const readPost = elements.posts.querySelector(`[data-id="${state.postsState.lastReadPostId}"]`);
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
       const [selectedPost] = state.feedsData.posts
-        .filter((post) => post.postId === state.modal.lastReadPostId);
+        .filter((post) => post.postId === state.postsState.lastReadPostId);
       const title = elements.modal.querySelector('.modal-title');
       const description = elements.modal.querySelector('.modal-body');
       title.textContent = selectedPost.postTitle;
@@ -126,7 +126,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'openPost': {
-      const openedPost = elements.posts.querySelector(`a[data-id=${state.modal.lastReadPostId}`);
+      const openedPost = elements.posts.querySelector(`a[data-id=${state.postsState.lastReadPostId}`);
       openedPost.classList.remove('fw-bold');
       openedPost.classList.add('fw-normal', 'link-secondary');
       break;
