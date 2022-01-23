@@ -115,12 +115,16 @@ const render = (i18nIntance, state, elements) => (path, value) => {
     case 'previewPost': {
       // console.log('modal is opened');
       const readPost = elements.posts.querySelector(`[data-id="${state.postsState.lastReadPostId}"]`);
+      const readPostUrl = readPost.href;
+      // console.log('!!!>>>', readPost.href);
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
       const [selectedPost] = state.feedsData.posts
         .filter((post) => post.postId === state.postsState.lastReadPostId);
       const title = elements.modal.querySelector('.modal-title');
       const description = elements.modal.querySelector('.modal-body');
+      const readFullPostLink = elements.modal.querySelector('.full-article');
+      readFullPostLink.href = readPostUrl;
       title.textContent = selectedPost.postTitle;
       description.textContent = selectedPost.postDesc;
       break;
