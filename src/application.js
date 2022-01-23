@@ -85,26 +85,35 @@ const app = (i18nextIntance) => {
 
   trackUpdates(state, watchedState);
 
-  elements.modal.addEventListener('show.bs.modal', (e) => {
-    const button = e.relatedTarget;
-    const id = button.getAttribute('data-id');
-    state.postsState.lastReadPostId = id;
-    state.postsState.readPostsIds.push(id);
-    watchedState.postsState.modalState = 'previewPost';
-    state.postsState.modalState = ''; // ???
-  });
+  // elements.modal.addEventListener('show.bs.modal', (e) => {
+  //   const button = e.relatedTarget;
+  //   const id = button.getAttribute('data-id');
+  //   state.postsState.lastReadPostId = id;
+  //   state.postsState.readPostsIds.push(id);
+  //   watchedState.postsState.modalState = 'previewPost';
+  //   state.postsState.modalState = ''; // ???
+  // });
 
   elements.posts.addEventListener('click', (e) => {
-    console.log(e.target.dataset.id);
+    // console.log(e.target.dataset.bsTarget);
     // console.log(e);
+    const { id } = e.target.dataset;
+    state.postsState.lastReadPostId = id;
+    state.postsState.readPostsIds.push(id);
     if (e.target.className === 'fw-bold') {
-      const { id } = e.target.dataset;
-      state.postsState.lastReadPostId = id;
-      state.postsState.readPostsIds.push(id);
+      // const { id } = e.target.dataset;
+      // state.postsState.lastReadPostId = id;
+      // state.postsState.readPostsIds.push(id);
       watchedState.postsState.modalState = 'openPost';
       state.postsState.modalState = ''; // ???
       // const readPost = elements.posts.querySelector(`a[data-id=${id}`);
       // console.log(readPost);
+    }
+
+    if (e.target.dataset.bsTarget === '#modal') {
+      console.log('button!');
+      watchedState.postsState.modalState = 'previewPost';
+      state.postsState.modalState = ''; // ???
     }
   });
 };

@@ -77,7 +77,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         const feeds = createBlock('Фиды');
         elements.feeds.appendChild(feeds);
         const posts = createBlock('Посты');
-        elements.posts.appendChild(posts);
+        elements.posts.prepend(posts);
       }
       const feedsList = elements.feeds.querySelector('ul');
       const [currentFeed] = state.feedsData.feeds
@@ -89,7 +89,8 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         .filter((post) => post.feedId === state.feedsData.currentFeedId);
       currentPosts.forEach((post) => {
         const postItem = createPostItem(post);
-        postsList.prepend(postItem);
+        // console.log(postsList);
+        postsList.append(postItem); // !!!!
       });
       break;
     }
