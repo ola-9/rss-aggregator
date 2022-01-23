@@ -53,9 +53,6 @@ const createPostItem = (post) => {
 };
 
 const render = (i18nIntance, state, elements) => (path, value) => {
-  // console.log(`path: ${path}`);
-  // console.log(`value: ${value}`);
-  // console.log(`prevValue: ${prevValue}`);
   const feedbackEl = elements.feedback;
   switch (value) {
     case 'invalid': {
@@ -73,7 +70,6 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       elements.form.reset();
       elements.urlInput.focus();
       if (state.feedsData.feeds.length === 1) {
-        // console.log('!!!', state.feedsData.feeds.length);
         const feeds = createBlock('Фиды');
         elements.feeds.appendChild(feeds);
         const posts = createBlock('Посты');
@@ -89,8 +85,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
         .filter((post) => post.feedId === state.feedsData.currentFeedId);
       currentPosts.forEach((post) => {
         const postItem = createPostItem(post);
-        // console.log(postsList);
-        postsList.append(postItem); // !!!!
+        postsList.append(postItem);
       });
       break;
     }
@@ -105,7 +100,6 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'updated': {
-      // console.log('updating posts');
       const postsList = elements.posts.querySelector('ul');
       state.update.postsToRender.forEach((post) => {
         const postItem = createPostItem(post);
@@ -114,10 +108,8 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'previewPost': {
-      // console.log('modal is opened');
       const readPost = elements.posts.querySelector(`[data-id="${state.postsState.lastReadPostId}"]`);
       const readPostUrl = readPost.href;
-      // console.log('!!!>>>', readPost.href);
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
       const [selectedPost] = state.feedsData.posts

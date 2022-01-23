@@ -29,8 +29,6 @@ const app = (i18nextIntance) => {
     modal: document.getElementById('modal'),
   };
 
-  // console.log(elements.addButton);
-
   const state = {
     locale: 'ru',
     postsState: {
@@ -42,7 +40,6 @@ const app = (i18nextIntance) => {
       updateState: '',
       postsToRender: [],
     },
-    // updateState: '',
     feedsData: {
       feeds: [],
       posts: [],
@@ -54,7 +51,7 @@ const app = (i18nextIntance) => {
     }, // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
     additionProcess: {
       submisionStatus: '',
-      validationState: '', // valid / invalid
+      validationState: '',
       errorDescPath: '',
       successDescPath: '',
     },
@@ -73,47 +70,30 @@ const app = (i18nextIntance) => {
         state.data.urls.push(state.data.urlToAdd);
         watchedState.additionProcess.submisionStatus = 'receiving';
         downloadRss(state, watchedState);
-        // watchedState.additionProcess.submisionStatus = 'received';
       })
       .catch((err) => {
         const [{ key }] = err.errors;
         state.additionProcess.errorDescPath = `addRssUrlForm.errors.${key}`;
         watchedState.additionProcess.validationState = 'invalid';
-        state.additionProcess.validationState = ''; // to check
+        state.additionProcess.validationState = '';
       });
   });
 
   trackUpdates(state, watchedState);
 
-  // elements.modal.addEventListener('show.bs.modal', (e) => {
-  //   const button = e.relatedTarget;
-  //   const id = button.getAttribute('data-id');
-  //   state.postsState.lastReadPostId = id;
-  //   state.postsState.readPostsIds.push(id);
-  //   watchedState.postsState.modalState = 'previewPost';
-  //   state.postsState.modalState = ''; // ???
-  // });
-
   elements.posts.addEventListener('click', (e) => {
-    // console.log(e.target.dataset.bsTarget);
-    // console.log(e);
     const { id } = e.target.dataset;
     state.postsState.lastReadPostId = id;
     state.postsState.readPostsIds.push(id);
     if (e.target.className === 'fw-bold') {
-      // const { id } = e.target.dataset;
-      // state.postsState.lastReadPostId = id;
-      // state.postsState.readPostsIds.push(id);
       watchedState.postsState.modalState = 'openPost';
-      state.postsState.modalState = ''; // ???
-      // const readPost = elements.posts.querySelector(`a[data-id=${id}`);
-      // console.log(readPost);
+      state.postsState.modalState = '';
     }
 
     if (e.target.dataset.bsTarget === '#modal') {
       console.log('button!');
       watchedState.postsState.modalState = 'previewPost';
-      state.postsState.modalState = ''; // ???
+      state.postsState.modalState = '';
     }
   });
 };
@@ -130,4 +110,3 @@ const runApp = () => {
 };
 
 export default runApp;
-// export default app;

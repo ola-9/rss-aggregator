@@ -1,11 +1,9 @@
 /* eslint-disable no-param-reassign */
-// import downloadRssfrom './parser';
 
 import axios from 'axios';
 import _ from 'lodash';
 
 const trackUpdates = (state, watchedState) => {
-  // console.log('updating feeds');
   state.data.urls.forEach((url) => {
     axios.get(`https://hexlet-allorigins.herokuapp.com/get?disableCache=true&url=${encodeURIComponent(`${url}`)}`)
       .then((response) => {
@@ -15,7 +13,6 @@ const trackUpdates = (state, watchedState) => {
       })
       .then((data) => {
         const [{ id }] = state.feedsData.feeds.filter((feed) => feed.url === url);
-        // console.log('feed id: ', id);
         const posts = [...data.querySelectorAll('item')]
           .map((post) => {
             const postTitle = post.querySelector('title').textContent;
@@ -26,7 +23,6 @@ const trackUpdates = (state, watchedState) => {
               postId, postTitle, postUrl, postDesc, feedId: id,
             };
           });
-        // console.log('posts from state before update: ', state.feedsData.posts);
         const postsToRender = posts
           .filter(({ postTitle: title1 }) => !state.feedsData.posts
             .some(({ postTitle: title2 }) => title2 === title1));
@@ -44,7 +40,6 @@ const trackUpdates = (state, watchedState) => {
   });
 
   setTimeout(() => trackUpdates(state, watchedState), 5000);
-  // setTimeout(trackUpdates, 5000);
 };
 
 export default trackUpdates;

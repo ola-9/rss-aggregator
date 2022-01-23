@@ -32,18 +32,14 @@ const downloadRss = (state, watchedState) => {
       return parsedRSS;
     })
     .then((data) => {
-      // console.log(data);
       const [feed, posts] = getData(data, state.data.urlToAdd);
       posts.forEach((post) => state.feedsData.posts.push(post));
       state.feedsData.currentFeedId = feed.id;
-      // console.log('currentFeedId: ', state.feedsData.currentFeedId);
-      // console.log(feed);
       state.feedsData.feeds.push(feed);
       watchedState.additionProcess.validationState = 'valid';
       state.additionProcess.validationState = '';
     })
-    .catch((error) => { // typeError - not valid RSS, Error: Ошибка сети
-      // console.log('error.name: ', error.name); // можно упростить и убрать switch
+    .catch((error) => {
       state.additionProcess.errorDescPath = `addRssUrlForm.${error.name}`;
       watchedState.additionProcess.validationState = 'invalid';
       state.additionProcess.validationState = '';
