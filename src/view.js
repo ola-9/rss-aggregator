@@ -112,7 +112,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       });
       break;
     }
-    case 'opened': {
+    case 'previewPost': {
       // console.log('modal is opened');
       const readPost = elements.posts.querySelector(`[data-id="${state.modal.lastReadPostId}"]`);
       readPost.classList.remove('fw-bold');
@@ -123,6 +123,12 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       const description = elements.modal.querySelector('.modal-body');
       title.textContent = selectedPost.postTitle;
       description.textContent = selectedPost.postDesc;
+      break;
+    }
+    case 'openPost': {
+      const openedPost = elements.posts.querySelector(`a[data-id=${state.modal.lastReadPostId}`);
+      openedPost.classList.remove('fw-bold');
+      openedPost.classList.add('fw-normal', 'link-secondary');
       break;
     }
     default:

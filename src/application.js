@@ -90,8 +90,22 @@ const app = (i18nextIntance) => {
     const id = button.getAttribute('data-id');
     state.modal.lastReadPostId = id;
     state.modal.readPostsIds.push(id);
-    watchedState.modal.modalState = 'opened';
+    watchedState.modal.modalState = 'previewPost';
     state.modal.modalState = ''; // ???
+  });
+
+  elements.posts.addEventListener('click', (e) => {
+    console.log(e.target.dataset.id);
+    // console.log(e);
+    if (e.target.className === 'fw-bold') {
+      const { id } = e.target.dataset;
+      state.modal.lastReadPostId = id;
+      state.modal.readPostsIds.push(id);
+      watchedState.modal.modalState = 'openPost';
+      state.modal.modalState = ''; // ???
+      // const readPost = elements.posts.querySelector(`a[data-id=${id}`);
+      // console.log(readPost);
+    }
   });
 };
 
