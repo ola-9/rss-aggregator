@@ -19,7 +19,7 @@ const getData = (data, url) => {
         postId, postTitle, postUrl, postDesc, feedId: id,
       };
     });
-  return [feed, posts];
+  return { feed, posts };
 };
 
 const downloadRss = (state, watchedState) => {
@@ -27,22 +27,19 @@ const downloadRss = (state, watchedState) => {
     .then((response) => {
       const parser = new DOMParser();
       const parsedRSS = parser.parseFromString(response.data.contents, 'text/xml');
-      state.additionProcess.successDescPath = 'addRssUrlForm.uploadSuccessMsg';
-      watchedState.additionProcess.submisionStatus = 'received';
-      return parsedRSS;
-    })
-    .then((data) => {
-      const [feed, posts] = getData(data, state.data.urlToAdd);
-      posts.forEach((post) => state.feedsData.posts.push(post));
-      state.feedsData.currentFeedId = feed.id;
-      state.feedsData.feeds.push(feed);
-      watchedState.additionProcess.validationState = 'valid';
-      state.additionProcess.validationState = '';
+      state.processState.success = 'addRssUrlForm.uploadSuccessMsg';
+      const { feed, posts } = getData(parsedRSS, state.data.urlToAdd);
+      posts.forEach((post) => state.data.posts.push(post));
+      state.data.currentFeedId = feed.id;
+      state.data.feeds.push(feed);
+      console.log('state.data: >>>>', state.data);
+      watchedState.processState.addition = 'completed';
+      state.processState.addition = null;
     })
     .catch((error) => {
-      state.additionProcess.errorDescPath = `addRssUrlForm.${error.name}`;
-      watchedState.additionProcess.validationState = 'invalid';
-      state.additionProcess.validationState = '';
+      state.processState.error = `addRssUrlForm.${error.name}`;
+      watchedState.processState.addition = 'invalid';
+      state.processState.addition = null;
     });
 };
 

@@ -12,7 +12,7 @@ const trackUpdates = (state, watchedState) => {
         return parsedRSS;
       })
       .then((data) => {
-        const [{ id }] = state.feedsData.feeds.filter((feed) => feed.url === url);
+        const [{ id }] = state.data.feeds.filter((feed) => feed.url === url);
         const posts = [...data.querySelectorAll('item')]
           .map((post) => {
             const postTitle = post.querySelector('title').textContent;
@@ -24,11 +24,11 @@ const trackUpdates = (state, watchedState) => {
             };
           });
         const postsToRender = posts
-          .filter(({ postTitle: title1 }) => !state.feedsData.posts
+          .filter(({ postTitle: title1 }) => !state.data.posts
             .some(({ postTitle: title2 }) => title2 === title1));
         // console.log('postsToRender', postsToRender);
         state.update.postsToRender = postsToRender;
-        state.feedsData.posts = state.feedsData.posts.concat(postsToRender);
+        state.data.posts = state.data.posts.concat(postsToRender);
         // console.log('posts from state after update: ', state.feedsData.posts);
         watchedState.update.updateState = 'updated';
         state.update.updateState = '';

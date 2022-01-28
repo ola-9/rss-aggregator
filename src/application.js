@@ -31,29 +31,27 @@ const app = (i18nextIntance) => {
 
   const state = {
     locale: 'ru',
-    postsState: {
-      modalState: '', // open, closed,
-      readPostsIds: [],
-      lastReadPostId: '',
-    },
+
     update: {
       updateState: '',
       postsToRender: [],
     },
-    feedsData: {
+
+    data: { // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
+      urls: [], // https://www.cnews.ru/inc/rss/news.xml
+      urlToAdd: '', // https://ru.hexlet.io/lessons.rss
       feeds: [],
       posts: [],
       currentFeedId: '',
+      readPostsIds: [],
+      lastReadPostId: '',
     },
-    data: {
-      urls: [], // https://www.cnews.ru/inc/rss/news.xml
-      urlToAdd: '', // https://ru.hexlet.io/lessons.rss
-    }, // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
-    additionProcess: {
-      submisionStatus: '',
-      validationState: '',
-      errorDescPath: '',
-      successDescPath: '',
+    processState: {
+      validation: '',
+      addition: '',
+      error: '',
+      success: '',
+      modal: '',
     },
   };
   const watchedState = onChange(state, render(i18nextIntance, state, elements));
@@ -68,14 +66,14 @@ const app = (i18nextIntance) => {
       .validate(state.data.urlToAdd)
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
-        watchedState.additionProcess.submisionStatus = 'receiving';
+        watchedState.processState.addition = 'receiving';
         downloadRss(state, watchedState);
       })
       .catch((err) => {
         const [{ key }] = err.errors;
-        state.additionProcess.errorDescPath = `addRssUrlForm.errors.${key}`;
-        watchedState.additionProcess.validationState = 'invalid';
-        state.additionProcess.validationState = '';
+        state.processState.error = `addRssUrlForm.errors.${key}`;
+        watchedState.processState.validation = 'invalid';
+        state.processState.validation = null;
       });
   });
 
@@ -83,17 +81,17 @@ const app = (i18nextIntance) => {
 
   elements.posts.addEventListener('click', (e) => {
     const { id } = e.target.dataset;
-    state.postsState.lastReadPostId = id;
-    state.postsState.readPostsIds.push(id);
+    state.data.lastReadPostId = id;
+    state.data.readPostsIds.push(id);
     if (e.target.className === 'fw-bold') {
-      watchedState.postsState.modalState = 'openPost';
-      state.postsState.modalState = '';
+      watchedState.processState.modal = 'openPost';
+      state.processState.modal = null;
     }
 
     if (e.target.dataset.bsTarget === '#modal') {
       console.log('button!');
-      watchedState.postsState.modalState = 'previewPost';
-      state.postsState.modalState = '';
+      watchedState.processState.modal = 'previewPost';
+      state.processState.modal = null;
     }
   });
 };

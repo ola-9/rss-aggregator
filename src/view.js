@@ -44,7 +44,7 @@ const createPostItem = (post) => {
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  button.dataset.id = post.postId; // example;
+  button.dataset.id = post.postId;
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
   button.textContent = 'Просмотр';
@@ -57,32 +57,34 @@ const render = (i18nIntance, state, elements) => (path, value) => {
   switch (value) {
     case 'invalid': {
       elements.urlInput.classList.add('is-invalid');
-      feedbackEl.textContent = i18nIntance.t(state.additionProcess.errorDescPath);
+      feedbackEl.textContent = i18nIntance.t(state.processState.error);
       feedbackEl.classList.add('text-danger');
       feedbackEl.classList.remove('text-success');
       break;
     }
-    case 'valid': {
+    case 'completed': {
+      elements.urlInput.readOnly = false;
+      elements.addButton.disabled = false;
       elements.urlInput.classList.remove('is-invalid');
-      feedbackEl.textContent = i18nIntance.t(state.additionProcess.successDescPath);
+      feedbackEl.textContent = i18nIntance.t(state.processState.success);
       feedbackEl.classList.remove('text-danger');
       feedbackEl.classList.add('text-success');
       elements.form.reset();
       elements.urlInput.focus();
-      if (state.feedsData.feeds.length === 1) {
+      if (state.data.feeds.length === 1) {
         const feeds = createBlock('Фиды');
         elements.feeds.appendChild(feeds);
         const posts = createBlock('Посты');
         elements.posts.prepend(posts);
       }
       const feedsList = elements.feeds.querySelector('ul');
-      const [currentFeed] = state.feedsData.feeds
-        .filter((feed) => feed.id === state.feedsData.currentFeedId);
+      const [currentFeed] = state.data.feeds
+        .filter((feed) => feed.id === state.data.currentFeedId);
       const feedItem = createFeedItem(currentFeed);
       feedsList.prepend(feedItem);
       const postsList = elements.posts.querySelector('ul');
-      const currentPosts = state.feedsData.posts
-        .filter((post) => post.feedId === state.feedsData.currentFeedId);
+      const currentPosts = state.data.posts
+        .filter((post) => post.feedId === state.data.currentFeedId);
       currentPosts.forEach((post) => {
         const postItem = createPostItem(post);
         postsList.append(postItem);
@@ -94,11 +96,6 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       elements.addButton.disabled = true;
       break;
     }
-    case 'received': {
-      elements.urlInput.readOnly = false;
-      elements.addButton.disabled = false;
-      break;
-    }
     case 'updated': {
       const postsList = elements.posts.querySelector('ul');
       state.update.postsToRender.forEach((post) => {
@@ -108,12 +105,12 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'previewPost': {
-      const readPost = elements.posts.querySelector(`[data-id="${state.postsState.lastReadPostId}"]`);
+      const readPost = elements.posts.querySelector(`[data-id="${state.data.lastReadPostId}"]`);
       const readPostUrl = readPost.href;
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
-      const [selectedPost] = state.feedsData.posts
-        .filter((post) => post.postId === state.postsState.lastReadPostId);
+      const [selectedPost] = state.data.posts
+        .filter((post) => post.postId === state.data.lastReadPostId);
       const title = elements.modal.querySelector('.modal-title');
       const description = elements.modal.querySelector('.modal-body');
       const readFullPostLink = elements.modal.querySelector('.full-article');
@@ -123,7 +120,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'openPost': {
-      const openedPost = elements.posts.querySelector(`a[data-id=${state.postsState.lastReadPostId}`);
+      const openedPost = elements.posts.querySelector(`a[data-id=${state.data.lastReadPostId}`);
       openedPost.classList.remove('fw-bold');
       openedPost.classList.add('fw-normal', 'link-secondary');
       break;
