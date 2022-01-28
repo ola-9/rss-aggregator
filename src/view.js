@@ -33,10 +33,10 @@ const createPostItem = (post) => {
   const item = document.createElement('li');
   item.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
   const aEl = document.createElement('a');
-  aEl.href = post.postUrl;
+  aEl.href = post.link;
   aEl.classList.add('fw-bold');
   aEl.rel = 'noopener, noreferrer';
-  aEl.dataset.id = post.postId;
+  aEl.dataset.id = post.id;
   aEl.target = '_blank';
   const description = document.createTextNode(post.postTitle);
   aEl.appendChild(description);
@@ -44,7 +44,7 @@ const createPostItem = (post) => {
   const button = document.createElement('button');
   button.setAttribute('type', 'button');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-  button.dataset.id = post.postId;
+  button.dataset.id = post.id;
   button.dataset.bsToggle = 'modal';
   button.dataset.bsTarget = '#modal';
   button.textContent = 'Просмотр';
@@ -55,14 +55,16 @@ const createPostItem = (post) => {
 const render = (i18nIntance, state, elements) => (path, value) => {
   const feedbackEl = elements.feedback;
   switch (value) {
-    case 'invalid': {
+    case 'error': {
+      elements.urlInput.readOnly = false;
+      elements.addButton.disabled = false;
       elements.urlInput.classList.add('is-invalid');
       feedbackEl.textContent = i18nIntance.t(state.processState.error);
       feedbackEl.classList.add('text-danger');
       feedbackEl.classList.remove('text-success');
       break;
     }
-    case 'completed': {
+    case 'received': {
       elements.urlInput.readOnly = false;
       elements.addButton.disabled = false;
       elements.urlInput.classList.remove('is-invalid');
@@ -106,11 +108,12 @@ const render = (i18nIntance, state, elements) => (path, value) => {
     }
     case 'previewPost': {
       const readPost = elements.posts.querySelector(`[data-id="${state.data.lastReadPostId}"]`);
+      console.log('>>>>', readPost);
       const readPostUrl = readPost.href;
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
       const [selectedPost] = state.data.posts
-        .filter((post) => post.postId === state.data.lastReadPostId);
+        .filter((post) => post.id === state.data.lastReadPostId);
       const title = elements.modal.querySelector('.modal-title');
       const description = elements.modal.querySelector('.modal-body');
       const readFullPostLink = elements.modal.querySelector('.full-article');

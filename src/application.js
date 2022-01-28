@@ -1,10 +1,19 @@
+/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
+import axios from 'axios';
+import _ from 'lodash';
 import render from './view';
 import ru from './locales/ru';
-import downloadRss from './parser';
 import trackUpdates from './update';
+import parseData from './parser';
+import getProxyUrl from './util';
+
+const validateUrl = (urlToAdd, urls) => yup.string()
+  .url()
+  .notOneOf(urls)
+  .validate(urlToAdd);
 
 const app = (i18nextIntance) => {
   yup.setLocale({
@@ -37,7 +46,7 @@ const app = (i18nextIntance) => {
       postsToRender: [],
     },
 
-    data: { // http://lorem-rss.herokuapp.com/feed?unit=second&interval=30
+    data: { // http://lorem-rss.herokuapp.com/feed?unit=second&interval=05
       urls: [], // https://www.cnews.ru/inc/rss/news.xml
       urlToAdd: '', // https://ru.hexlet.io/lessons.rss
       feeds: [],
@@ -54,25 +63,44 @@ const app = (i18nextIntance) => {
       modal: '',
     },
   };
+
   const watchedState = onChange(state, render(i18nextIntance, state, elements));
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     state.data.urlToAdd = formData.get('url');
-    yup.string()
-      .url()
-      .notOneOf(state.data.urls)
-      .validate(state.data.urlToAdd)
+    validateUrl(state.data.urlToAdd, state.data.urls)
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
         watchedState.processState.addition = 'receiving';
-        downloadRss(state, watchedState);
+        const url = getProxyUrl(state.data.urlToAdd);
+        axios.get(url)
+          .then((response) => {
+            const { feed, posts } = parseData(response);
+            feed.url = state.data.urlToAdd;
+            feed.id = _.uniqueId('feed_');
+            posts.forEach((post) => {
+              post.id = _.uniqueId('post_');
+              post.feedId = feed.id;
+            });
+            state.data.feeds.push(feed);
+            state.data.posts = state.data.posts.concat(posts);
+            state.data.currentFeedId = feed.id;
+            state.processState.success = 'addRssUrlForm.uploadSuccessMsg';
+            watchedState.processState.addition = 'received';
+            // console.log('state.data.posts:', state.data.posts);
+          })
+          .catch((error) => {
+            state.processState.error = `addRssUrlForm.${error.name}`;
+            watchedState.processState.addition = 'error';
+            state.processState.addition = null;
+          });
       })
       .catch((err) => {
         const [{ key }] = err.errors;
         state.processState.error = `addRssUrlForm.errors.${key}`;
-        watchedState.processState.validation = 'invalid';
+        watchedState.processState.validation = 'error';
         state.processState.validation = null;
       });
   });
@@ -89,7 +117,6 @@ const app = (i18nextIntance) => {
     }
 
     if (e.target.dataset.bsTarget === '#modal') {
-      console.log('button!');
       watchedState.processState.modal = 'previewPost';
       state.processState.modal = null;
     }
