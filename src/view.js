@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 const createBlock = (blockname) => {
   const blockWrapper = document.createElement('div');
   blockWrapper.classList.add('card', 'border-0');
@@ -38,7 +37,7 @@ const createPostItem = (post) => {
   aEl.rel = 'noopener, noreferrer';
   aEl.dataset.id = post.id;
   aEl.target = '_blank';
-  const description = document.createTextNode(post.postTitle);
+  const description = document.createTextNode(post.title);
   aEl.appendChild(description);
   item.appendChild(aEl);
   const button = document.createElement('button');
@@ -52,23 +51,27 @@ const createPostItem = (post) => {
   return item;
 };
 
+const renderError = (i18nIntance, state, elements) => {
+  elements.addButton.removeAttribute('disabled');
+  elements.urlInput.removeAttribute('readonly');
+  elements.urlInput.classList.add('is-invalid');
+  // eslint-disable-next-line no-param-reassign
+  elements.feedback.textContent = i18nIntance.t(state.processState.message);
+  elements.feedback.classList.add('text-danger');
+  elements.feedback.classList.remove('text-success');
+};
+
 const render = (i18nIntance, state, elements) => (path, value) => {
   const feedbackEl = elements.feedback;
   switch (value) {
-    case 'error': {
-      elements.urlInput.readOnly = false;
-      elements.addButton.disabled = false;
-      elements.urlInput.classList.add('is-invalid');
-      feedbackEl.textContent = i18nIntance.t(state.processState.error);
-      feedbackEl.classList.add('text-danger');
-      feedbackEl.classList.remove('text-success');
+    case 'error':
+      renderError(i18nIntance, state, elements);
       break;
-    }
     case 'received': {
-      elements.urlInput.readOnly = false;
-      elements.addButton.disabled = false;
+      elements.addButton.removeAttribute('disabled');
+      elements.urlInput.removeAttribute('readonly');
       elements.urlInput.classList.remove('is-invalid');
-      feedbackEl.textContent = i18nIntance.t(state.processState.success);
+      feedbackEl.textContent = i18nIntance.t(state.processState.message);
       feedbackEl.classList.remove('text-danger');
       feedbackEl.classList.add('text-success');
       elements.form.reset();
@@ -94,13 +97,13 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'receiving': {
-      elements.urlInput.readOnly = true;
-      elements.addButton.disabled = true;
+      elements.addButton.setAttribute('disabled', '');
+      elements.urlInput.setAttribute('readonly', true);
       break;
     }
-    case 'updated': {
+    case 'completed': {
       const postsList = elements.posts.querySelector('ul');
-      state.update.postsToRender.forEach((post) => {
+      state.data.postsToRender.forEach((post) => {
         const postItem = createPostItem(post);
         postsList.prepend(postItem);
       });
@@ -108,7 +111,6 @@ const render = (i18nIntance, state, elements) => (path, value) => {
     }
     case 'previewPost': {
       const readPost = elements.posts.querySelector(`[data-id="${state.data.lastReadPostId}"]`);
-      console.log('>>>>', readPost);
       const readPostUrl = readPost.href;
       readPost.classList.remove('fw-bold');
       readPost.classList.add('fw-normal', 'link-secondary');
@@ -118,8 +120,8 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       const description = elements.modal.querySelector('.modal-body');
       const readFullPostLink = elements.modal.querySelector('.full-article');
       readFullPostLink.href = readPostUrl;
-      title.textContent = selectedPost.postTitle;
-      description.textContent = selectedPost.postDesc;
+      title.textContent = selectedPost.title;
+      description.textContent = selectedPost.description;
       break;
     }
     case 'openPost': {

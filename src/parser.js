@@ -9,7 +9,11 @@ const parseData = (response) => {
       const postTitle = item.querySelector('title').textContent;
       const link = item.querySelector('link').textContent;
       const postDesc = item.querySelector('description').textContent;
-      return { postTitle, link, postDesc };
+      return {
+        title: postTitle,
+        link,
+        description: postDesc,
+      };
     });
   return { feed, posts };
 };

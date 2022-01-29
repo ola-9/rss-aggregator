@@ -10,20 +10,21 @@ const trackUpdates = (state, watchedState) => {
       const [{ id }] = state.data.feeds.filter((feed) => feed.url === url);
       const { posts } = parseData(response);
       const postsToRender = posts
-        .filter(({ postTitle: title1 }) => !state.data.posts
-          .some(({ postTitle: title2 }) => title2 === title1));
-      postsToRender.forEach((post) => {
-        post.id = _.uniqueId('post_');
-        post.feedId = id;
-      });
-      state.update.postsToRender = postsToRender;
+        .filter(({ title: title1 }) => !state.data.posts
+          .some(({ title: title2 }) => title2 === title1));
+      postsToRender.forEach((post) => (
+        { ...post, id: _.uniqueId('post_'), feedId: id }
+      ));
+      state.data.postsToRender = postsToRender;
       state.data.posts = state.data.posts.concat(postsToRender);
-      watchedState.update.updateState = 'updated';
-      state.update.updateState = null;
-      state.update.postsToRender = null;
+      watchedState.processState.updating = 'completed';
+      state.processState.updating = 'null';
+      state.data.postsToRender = [];
     })
     .catch((error) => {
-      console.log('Network error>>>>', error);
+      state.processState.message = `addRss.${error.name}`;
+      watchedState.processState.updating = 'error';
+      state.processState.updating = null;
     }));
 
   Promise.all(promises)

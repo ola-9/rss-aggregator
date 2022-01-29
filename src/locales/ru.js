@@ -1,6 +1,6 @@
 export default {
   translation: {
-    addRssUrlForm: {
+    addRss: {
       errors: {
         notUniqueUrl: 'RSS уже существует',
         invalidUrl: 'Ссылка должна быть валидным URL',

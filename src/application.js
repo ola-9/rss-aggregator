@@ -1,14 +1,13 @@
-/* eslint-disable no-param-reassign */
 import onChange from 'on-change';
 import * as yup from 'yup';
 import i18next from 'i18next';
 import axios from 'axios';
-import _ from 'lodash';
 import render from './view';
 import ru from './locales/ru';
 import trackUpdates from './update';
 import parseData from './parser';
 import getProxyUrl from './util';
+import { getFeed, getPosts } from './data';
 
 const validateUrl = (urlToAdd, urls) => yup.string()
   .url()
@@ -41,11 +40,6 @@ const app = (i18nextIntance) => {
   const state = {
     locale: 'ru',
 
-    update: {
-      updateState: '',
-      postsToRender: [],
-    },
-
     data: { // http://lorem-rss.herokuapp.com/feed?unit=second&interval=05
       urls: [], // https://www.cnews.ru/inc/rss/news.xml
       urlToAdd: '', // https://ru.hexlet.io/lessons.rss
@@ -54,13 +48,14 @@ const app = (i18nextIntance) => {
       currentFeedId: '',
       readPostsIds: [],
       lastReadPostId: '',
+      postsToRender: [],
     },
     processState: {
       validation: '',
       addition: '',
-      error: '',
-      success: '',
+      message: '',
       modal: '',
+      updating: '',
     },
   };
 
@@ -74,32 +69,26 @@ const app = (i18nextIntance) => {
       .then(() => {
         state.data.urls.push(state.data.urlToAdd);
         watchedState.processState.addition = 'receiving';
-        const url = getProxyUrl(state.data.urlToAdd);
-        axios.get(url)
+        axios.get(getProxyUrl(state.data.urlToAdd))
           .then((response) => {
-            const { feed, posts } = parseData(response);
-            feed.url = state.data.urlToAdd;
-            feed.id = _.uniqueId('feed_');
-            posts.forEach((post) => {
-              post.id = _.uniqueId('post_');
-              post.feedId = feed.id;
-            });
+            const data = parseData(response);
+            const feed = getFeed(data, state.data.urlToAdd);
+            const posts = getPosts(data, feed.id);
             state.data.feeds.push(feed);
             state.data.posts = state.data.posts.concat(posts);
             state.data.currentFeedId = feed.id;
-            state.processState.success = 'addRssUrlForm.uploadSuccessMsg';
+            state.processState.message = 'addRss.uploadSuccessMsg';
             watchedState.processState.addition = 'received';
-            // console.log('state.data.posts:', state.data.posts);
           })
           .catch((error) => {
-            state.processState.error = `addRssUrlForm.${error.name}`;
+            state.processState.message = `addRss.${error.name}`;
             watchedState.processState.addition = 'error';
             state.processState.addition = null;
           });
       })
       .catch((err) => {
         const [{ key }] = err.errors;
-        state.processState.error = `addRssUrlForm.errors.${key}`;
+        state.processState.message = `addRss.errors.${key}`;
         watchedState.processState.validation = 'error';
         state.processState.validation = null;
       });
