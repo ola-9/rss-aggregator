@@ -20,4 +20,14 @@ const getPosts = (data, feedId) => data.posts
     }
   ));
 
-export { getFeed, getPosts };
+const getFeedUpdates = (state, feedId, updatedPosts) => {
+  const newPosts = updatedPosts
+    .filter(({ title: title1 }) => !state.data.posts
+      .some(({ title: title2 }) => title2 === title1));
+  newPosts.forEach((post) => (
+    { ...post, id: _.uniqueId('post_'), feedId }
+  ));
+  return newPosts;
+};
+
+export { getFeed, getPosts, getFeedUpdates };

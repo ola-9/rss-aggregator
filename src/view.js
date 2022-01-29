@@ -51,49 +51,67 @@ const createPostItem = (post) => {
   return item;
 };
 
-const renderError = (i18nIntance, state, elements) => {
+const enableInput = (elements) => {
   elements.addButton.removeAttribute('disabled');
   elements.urlInput.removeAttribute('readonly');
-  elements.urlInput.classList.add('is-invalid');
-  // eslint-disable-next-line no-param-reassign
-  elements.feedback.textContent = i18nIntance.t(state.processState.message);
-  elements.feedback.classList.add('text-danger');
-  elements.feedback.classList.remove('text-success');
+};
+
+const renderFeed = (state, elements) => {
+  if (state.data.feeds.length === 1) {
+    const feedsBlock = createBlock('Фиды');
+    elements.feeds.appendChild(feedsBlock);
+    const postsBlock = createBlock('Посты');
+    elements.posts.prepend(postsBlock);
+  }
+  const feedsList = elements.feeds.querySelector('ul');
+  const [currentFeed] = state.data.feeds
+    .filter((feed) => feed.id === state.data.currentFeedId);
+  const feedItem = createFeedItem(currentFeed);
+  feedsList.prepend(feedItem);
+  const postsList = elements.posts.querySelector('ul');
+  const currentPosts = state.data.posts
+    .filter((post) => post.feedId === state.data.currentFeedId);
+  currentPosts.forEach((post) => {
+    const postItem = createPostItem(post);
+    postsList.append(postItem);
+  });
+};
+
+const renderModal = (state, elements) => {
+  const readPost = elements.posts.querySelector(`[data-id="${state.data.lastReadPostId}"]`);
+  const readPostUrl = readPost.href;
+  readPost.classList.remove('fw-bold');
+  readPost.classList.add('fw-normal', 'link-secondary');
+  const [selectedPost] = state.data.posts
+    .filter((post) => post.id === state.data.lastReadPostId);
+  const title = elements.modal.querySelector('.modal-title');
+  const description = elements.modal.querySelector('.modal-body');
+  const readFullPostLink = elements.modal.querySelector('.full-article');
+  readFullPostLink.href = readPostUrl;
+  title.textContent = selectedPost.title;
+  description.textContent = selectedPost.description;
 };
 
 const render = (i18nIntance, state, elements) => (path, value) => {
   const feedbackEl = elements.feedback;
   switch (value) {
-    case 'error':
-      renderError(i18nIntance, state, elements);
+    case 'error': {
+      enableInput(elements);
+      elements.urlInput.classList.add('is-invalid');
+      feedbackEl.textContent = i18nIntance.t(state.processState.message);
+      feedbackEl.classList.add('text-danger');
+      feedbackEl.classList.remove('text-success');
       break;
+    }
     case 'received': {
-      elements.addButton.removeAttribute('disabled');
-      elements.urlInput.removeAttribute('readonly');
+      enableInput(elements);
       elements.urlInput.classList.remove('is-invalid');
       feedbackEl.textContent = i18nIntance.t(state.processState.message);
       feedbackEl.classList.remove('text-danger');
       feedbackEl.classList.add('text-success');
       elements.form.reset();
       elements.urlInput.focus();
-      if (state.data.feeds.length === 1) {
-        const feeds = createBlock('Фиды');
-        elements.feeds.appendChild(feeds);
-        const posts = createBlock('Посты');
-        elements.posts.prepend(posts);
-      }
-      const feedsList = elements.feeds.querySelector('ul');
-      const [currentFeed] = state.data.feeds
-        .filter((feed) => feed.id === state.data.currentFeedId);
-      const feedItem = createFeedItem(currentFeed);
-      feedsList.prepend(feedItem);
-      const postsList = elements.posts.querySelector('ul');
-      const currentPosts = state.data.posts
-        .filter((post) => post.feedId === state.data.currentFeedId);
-      currentPosts.forEach((post) => {
-        const postItem = createPostItem(post);
-        postsList.append(postItem);
-      });
+      renderFeed(state, elements);
       break;
     }
     case 'receiving': {
@@ -110,18 +128,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       break;
     }
     case 'previewPost': {
-      const readPost = elements.posts.querySelector(`[data-id="${state.data.lastReadPostId}"]`);
-      const readPostUrl = readPost.href;
-      readPost.classList.remove('fw-bold');
-      readPost.classList.add('fw-normal', 'link-secondary');
-      const [selectedPost] = state.data.posts
-        .filter((post) => post.id === state.data.lastReadPostId);
-      const title = elements.modal.querySelector('.modal-title');
-      const description = elements.modal.querySelector('.modal-body');
-      const readFullPostLink = elements.modal.querySelector('.full-article');
-      readFullPostLink.href = readPostUrl;
-      title.textContent = selectedPost.title;
-      description.textContent = selectedPost.description;
+      renderModal(state, elements);
       break;
     }
     case 'openPost': {

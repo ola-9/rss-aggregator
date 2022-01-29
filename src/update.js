@@ -1,22 +1,17 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-import _ from 'lodash';
+// import _ from 'lodash';
 import getProxyUrl from './util';
 import parseData from './parser';
+import { getFeedUpdates } from './data';
 
 const trackUpdates = (state, watchedState) => {
-  const promises = state.data.urls.map((url) => axios.get(getProxyUrl(url))
+  const promises = state.data.feeds.map((feed) => axios.get(getProxyUrl(feed.url))
     .then((response) => {
-      const [{ id }] = state.data.feeds.filter((feed) => feed.url === url);
-      const { posts } = parseData(response);
-      const postsToRender = posts
-        .filter(({ title: title1 }) => !state.data.posts
-          .some(({ title: title2 }) => title2 === title1));
-      postsToRender.forEach((post) => (
-        { ...post, id: _.uniqueId('post_'), feedId: id }
-      ));
-      state.data.postsToRender = postsToRender;
-      state.data.posts = state.data.posts.concat(postsToRender);
+      const { id } = feed;
+      const newPosts = getFeedUpdates(state, id, parseData(response).posts);
+      state.data.postsToRender = newPosts;
+      state.data.posts = state.data.posts.concat(newPosts);
       watchedState.processState.updating = 'completed';
       state.processState.updating = 'null';
       state.data.postsToRender = [];
