@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-// import _ from 'lodash';
 import getProxyUrl from './util';
 import parseData from './parser';
 import { getFeedUpdates } from './data';
@@ -12,7 +11,7 @@ const trackUpdates = (state, watchedState) => {
       const newPosts = getFeedUpdates(state, id, parseData(response).posts);
       state.data.postsToRender = newPosts;
       state.data.posts = state.data.posts.concat(newPosts);
-      watchedState.processState.updating = 'completed';
+      watchedState.processState.updating = 'updated';
       state.processState.updating = 'null';
       state.data.postsToRender = [];
     })

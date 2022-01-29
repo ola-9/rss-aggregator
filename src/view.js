@@ -73,7 +73,11 @@ const renderFeed = (state, elements) => {
     .filter((post) => post.feedId === state.data.currentFeedId);
   currentPosts.forEach((post) => {
     const postItem = createPostItem(post);
-    postsList.append(postItem);
+    if (state.data.feeds.length === 1) {
+      postsList.append(postItem);
+    } else {
+      postsList.prepend(postItem);
+    }
   });
 };
 
@@ -119,7 +123,7 @@ const render = (i18nIntance, state, elements) => (path, value) => {
       elements.urlInput.setAttribute('readonly', true);
       break;
     }
-    case 'completed': {
+    case 'updated': {
       const postsList = elements.posts.querySelector('ul');
       state.data.postsToRender.forEach((post) => {
         const postItem = createPostItem(post);
