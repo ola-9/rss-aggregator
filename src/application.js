@@ -40,9 +40,9 @@ const app = (i18nextIntance) => {
   const state = {
     locale: 'ru',
 
-    data: { // http://lorem-rss.herokuapp.com/feed?unit=second&interval=05
-      urls: [], // https://www.cnews.ru/inc/rss/news.xml
-      urlToAdd: '', // https://ru.hexlet.io/lessons.rss
+    data: {
+      urls: [],
+      urlToAdd: '',
       feeds: [],
       posts: [],
       currentFeedId: '',
@@ -124,3 +124,8 @@ const runApp = () => {
 };
 
 export default runApp;
+
+// exmaples of rss feeds:
+// http://lorem-rss.herokuapp.com/feed?unit=second&interval=05
+// https://www.cnews.ru/inc/rss/news.xml
+// https://ru.hexlet.io/lessons.rss
