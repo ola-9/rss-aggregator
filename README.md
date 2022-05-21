@@ -21,11 +21,13 @@ $ make install
 
 ## Overview
 This app is my learning project from the [Hexlet Frontend Developer course](https://hexlet.io) aimed to get hands-on experience with the following topics:
-- Vanilla JS and Model-view-controller pattern
+- Vanilla JS and DOM API 
+- UX basics: block elements while sending/receiving network requests, focus inputs, reflecting progress
+- [Bootstrap](https://getbootstrap.com/) grid, components and utilities
+- Model-view-controller pattern
 - State management using [onchange](https://github.com/Qard/onchange)
 - Data validation by [yup](https://github.com/jquense/yup)
 - Interface internationalization and text management by [i18next](https://www.i18next.com/)
-- AJAX and promises using [axios](https://github.com/axios/axios) 
-- [Bootstrap](https://getbootstrap.com/) grid, components and utilities
-- [Webpack](https://webpack.js.org/) to bundle the project
-- Deploy to [Vercel](https://vercel.com/)
+- AJAX, promises and handling errors using [axios](https://github.com/axios/axios)
+- Bundling project by [Webpack](https://webpack.js.org/)
+- Deployment to [Vercel](https://vercel.com/)
